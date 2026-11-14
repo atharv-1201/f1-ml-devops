@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏎️ F1 2025 Monaco GP Race Predictor | DevOps ML Inference</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #e10600 0%, #8b0000 100%);
+            box-shadow: 0 4px 20px rgba(225, 6, 0, 0.4);
+        }
+        .card {
+            background-color: #161f30;
+            border: 1px solid #23314d;
+            border-radius: 12px;
+        }
+        .badge-p1 { background-color: #ffd700; color: #000; font-weight: bold; }
+        .badge-p2 { background-color: #c0c0c0; color: #000; font-weight: bold; }
+        .badge-p3 { background-color: #cd7f32; color: #fff; font-weight: bold; }
+        .btn-f1 {
+            background-color: #e10600;
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-f1:hover {
+            background-color: #b00500;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .table-dark {
+            --bs-table-bg: #161f30;
+            --bs-table-striped-bg: #1c273c;
+        }
+        .tech-pill {
+            background: #1f293d;
+            border: 1px solid #334155;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body class="py-4">
+    <div class="container">
+        <!-- Header -->
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+            <div>
+                <h1 class="h3 mb-1"><i class="fa-solid fa-flag-checkered text-danger me-2"></i>F1 Race Pace Predictor</h1>
+                <p class="text-secondary small mb-0">ML Inference Service • AWS EC2 & Docker Deployment</p>
+            </div>
+            <div class="text-end">
+                <span class="tech-pill"><i class="fa-brands fa-docker text-primary me-1"></i>Docker</span>
+                <span class="tech-pill"><i class="fa-brands fa-aws text-warning me-1"></i>AWS EC2</span>
+                <span class="tech-pill"><i class="fa-brands fa-python text-info me-1"></i>FastAPI</span>
+                <a href="/docs" target="_blank" class="btn btn-sm btn-outline-light ms-2"><i class="fa-solid fa-book me-1"></i>Swagger API Docs</a>
+            </div>
+        </header>
+
+        <!-- Status Bar -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card p-3 text-center">
+                    <small class="text-secondary">Service Status</small>
+                    <h5 class="text-success mb-0 mt-1"><i class="fa-solid fa-circle-check me-1"></i>Healthy (Live)</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3 text-center">
+                    <small class="text-secondary">Model Architecture</small>
+                    <h5 class="text-info mb-0 mt-1">Gradient Boosting</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3 text-center">
+                    <small class="text-secondary">Track</small>
+                    <h5 class="text-warning mb-0 mt-1">Monaco GP 2025</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3 text-center">
+                    <small class="text-secondary">CI/CD Pipeline</small>
+                    <h5 class="text-primary mb-0 mt-1"><i class="fa-solid fa-code-branch me-1"></i>Automated</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Controls Form -->
+            <div class="col-lg-4">
+                <div class="card p-4">
+                    <h5 class="card-title mb-3"><i class="fa-solid fa-sliders me-2 text-danger"></i>Race Simulation Controls</h5>
+                    <div class="mb-3">
+                        <label class="form-label small">Rain Probability: <span id="rainVal" class="text-info fw-bold">0%</span></label>
+                        <input type="range" class="form-range" id="rainRange" min="0" max="1" step="0.05" value="0" oninput="updateRain(this.value)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Track / Air Temperature (°C): <span id="tempVal" class="text-info fw-bold">22°C</span></label>
+                        <input type="range" class="form-range" id="tempRange" min="10" max="45" step="1" value="22" oninput="updateTemp(this.value)">
+                    </div>
+                    <button class="btn btn-f1 w-100 py-2 mb-3" onclick="runGridSimulation()">
+                        <i class="fa-solid fa-play me-2"></i>Simulate Full Race Grid
+                    </button>
+
+                    <hr class="border-secondary my-3">
+
+                    <h6 class="small text-secondary mb-2"><i class="fa-solid fa-user me-1"></i>Single Driver Inference</h6>
+                    <div class="input-group mb-2">
+                        <select class="form-select bg-dark text-light border-secondary" id="driverSelect">
+                            <option value="VER">Max Verstappen (VER)</option>
+                            <option value="NOR">Lando Norris (NOR)</option>
+                            <option value="LEC" selected>Charles Leclerc (LEC)</option>
+                            <option value="PIA">Oscar Piastri (PIA)</option>
+                            <option value="HAM">Lewis Hamilton (HAM)</option>
+                            <option value="RUS">George Russell (RUS)</option>
+                            <option value="SAI">Carlos Sainz (SAI)</option>
+                            <option value="ALO">Fernando Alonso (ALO)</option>
+                            <option value="ALB">Alexander Albon (ALB)</option>
+                            <option value="GAS">Pierre Gasly (GAS)</option>
+                            <option value="HUL">Nico Hulkenberg (HUL)</option>
+                            <option value="STR">Lance Stroll (STR)</option>
+                        </select>
+                        <button class="btn btn-outline-danger" onclick="predictSingleDriver()">Predict</button>
+                    </div>
+                    <div id="singleResult" class="small mt-2 p-2 bg-dark rounded border border-secondary" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Standings Table & Results -->
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0"><i class="fa-solid fa-trophy me-2 text-warning"></i>Predicted Monaco GP Standings</h5>
+                        <span id="latencyBadge" class="badge bg-secondary">Inference: -- ms</span>
+                    </div>
+
+                    <!-- Podium Highlights -->
+                    <div class="row g-2 mb-3 text-center" id="podiumSection" style="display:none;">
+                        <div class="col-4">
+                            <div class="p-2 rounded bg-dark border border-secondary">
+                                <span class="badge badge-p2">P2</span>
+                                <h6 class="mt-1 mb-0" id="p2Driver">--</h6>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 rounded bg-dark border border-warning">
+                                <span class="badge badge-p1">P1 Winner</span>
+                                <h6 class="mt-1 mb-0" id="p1Driver">--</h6>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 rounded bg-dark border border-secondary">
+                                <span class="badge badge-p3">P3</span>
+                                <h6 class="mt-1 mb-0" id="p3Driver">--</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Driver</th>
+                                    <th>Team</th>
+                                    <th>Quali (s)</th>
+                                    <th>Pred. Lap (s)</th>
+                                    <th>Gap to P1</th>
+                                </tr>
+                            </thead>
+                            <tbody id="standingsBody">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">Click "Simulate Full Race Grid" to run inference.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateRain(val) {
+            document.getElementById('rainVal').innerText = Math.round(val * 100) + '%';
+        }
+        function updateTemp(val) {
+            document.getElementById('tempVal').innerText = val + '°C';
+        }
+
+        async function runGridSimulation() {
+            const rain = parseFloat(document.getElementById('rainRange').value);
+            const temp = parseFloat(document.getElementById('tempRange').value);
+            const start = performance.now();
+
+            try {
+                const res = await fetch('/predict/grid', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({rain_probability: rain, temperature: temp})
+                });
+                const data = await res.json();
+                const latency = Math.round(performance.now() - start);
+                document.getElementById('latencyBadge').innerText = `Inference: ${latency} ms`;
+
+                // Render Podium
+                document.getElementById('podiumSection').style.display = 'flex';
+                document.getElementById('p1Driver').innerText = data.podium[0];
+                document.getElementById('p2Driver').innerText = data.podium[1];
+                document.getElementById('p3Driver').innerText = data.podium[2];
+
+                // Render Table
+                const tbody = document.getElementById('standingsBody');
+                tbody.innerHTML = '';
+                data.standings.forEach(s => {
+                    let badgeClass = s.position === 1 ? 'badge-p1' : s.position === 2 ? 'badge-p2' : s.position === 3 ? 'badge-p3' : 'bg-secondary';
+                    let gapText = s.gap_to_leader === 0 ? 'Leader' : `+${s.gap_to_leader}s`;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><span class="badge ${badgeClass}">${s.position}</span></td>
+                            <td class="fw-bold">${s.driver}</td>
+                            <td>${s.team}</td>
+                            <td>${s.qualifying_time || 'N/A'}</td>
+                            <td class="text-info fw-bold">${s.predicted_lap_time}s</td>
+                            <td>${gapText}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                alert('Simulation failed: ' + err);
+            }
+        }
+
+        async function predictSingleDriver() {
+            const driver = document.getElementById('driverSelect').value;
+            const rain = parseFloat(document.getElementById('rainRange').value);
+            const temp = parseFloat(document.getElementById('tempRange').value);
+            const box = document.getElementById('singleResult');
+
+            try {
+                const res = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({driver: driver, rain_probability: rain, temperature: temp})
+                });
+                const data = await res.json();
+                box.style.display = 'block';
+                box.innerHTML = `<strong>${data.driver} (${data.team})</strong>: Predicted Lap Time = <span class="text-info fw-bold">${data.predicted_lap_time}s</span>`;
+            } catch (err) {
+                alert('Prediction failed: ' + err);
+            }
+        }
+
+        // Run default simulation on page load
+        window.onload = runGridSimulation;
+    </script>
+</body>
+</html>
