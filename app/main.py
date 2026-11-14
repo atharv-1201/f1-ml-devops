@@ -14,9 +14,9 @@ from app.schemas import (
 from app.model import F1PredictionEngine
 
 app = FastAPI(
-    title="🏎️ F1 2025 Race Pace Prediction API",
+    title="🏎️ FormulaVision API",
     description="End-to-End MLOps & DevOps API for Formula 1 race pace prediction and podium simulation.",
-    version="1.0.0"
+    version="1.1.0"
 )
 
 # Enable CORS for external frontend or Swagger access
