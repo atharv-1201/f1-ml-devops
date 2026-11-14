@@ -53,7 +53,7 @@ def health_check():
     return HealthResponse(
         status="healthy" if is_ready else "degraded",
         service="f1-predictor-api",
-        version="1.0.0",
+        version="1.1.0",
         model_loaded=is_ready
     )
 
