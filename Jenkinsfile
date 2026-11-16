@@ -19,7 +19,7 @@ pipeline {
 
         stage('2. Automated Testing') {
             steps {
-                echo 'Running Unit Tests and Quality Checks...'
+                echo 'Running Pytest Quality Gate...'
                 sh '''
                     python3 -m venv .venv || true
                     . .venv/bin/activate
@@ -30,25 +30,33 @@ pipeline {
             }
         }
 
-        stage('3. Build Docker Container') {
+        stage('3. Build Verification') {
             steps {
-                echo 'Building Docker Image...'
-                sh 'docker build -t ${APP_NAME}:${IMAGE_TAG} .'
+                echo 'Validating Dockerfile and application structure...'
+                sh '''
+                    test -f Dockerfile
+                    test -f requirements.txt
+                    test -d app
+                    echo "Application structure verified successfully."
+                '''
             }
         }
 
         stage('4. Deploy to AWS EC2') {
             steps {
-                echo 'Deploying containerized ML application to AWS EC2...'
+                echo "Deploying containerized ML application to AWS EC2 (${EC2_HOST})..."
                 sshagent(['ec2-ssh-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
-                            if [ ! -d ~/devops-project ]; then
-                                git clone https://github.com/${GITHUB_REPOSITORY}.git ~/devops-project
+                            if [ ! -d ~/f1-ml-devops ]; then
+                                git clone https://github.com/atharv-1201/f1-ml-devops.git ~/f1-ml-devops
                             fi
-                            cd ~/devops-project
-                            git pull
+                            cd ~/f1-ml-devops
+                            git fetch --all
+                            git reset --hard origin/main
+                            echo 'Building Docker container on EC2...'
                             docker build -t ${APP_NAME}:${IMAGE_TAG} .
+                            echo 'Restarting service...'
                             docker stop ${APP_NAME} || true
                             docker rm ${APP_NAME} || true
                             docker run -d --name ${APP_NAME} --restart always -p ${PORT}:8000 ${APP_NAME}:${IMAGE_TAG}
