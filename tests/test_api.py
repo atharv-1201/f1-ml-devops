@@ -6,7 +6,7 @@ client = TestClient(app)
 
 def test_health_endpoint():
     response = client.get("/health")
-    assert response.status_code == 500
+    assert response.status_code == 200
     data = response.json()
     assert data["status"] == "healthy"
     assert data["service"] == "f1-predictor-api"

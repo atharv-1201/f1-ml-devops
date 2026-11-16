@@ -4,7 +4,7 @@ pipeline {
     environment {
         APP_NAME = "f1-predictor"
         IMAGE_TAG = "latest"
-        EC2_HOST = "18.61.27.74"
+        EC2_HOST = "16.112.226.25"
         EC2_USER = "ubuntu"
         PORT = "8000"
     }
