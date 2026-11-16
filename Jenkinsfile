@@ -71,10 +71,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Pipeline Success: ML Inference live on AWS EC2 at http://${EC2_HOST}:${PORT}"
+            echo " Pipeline Success: ML Inference live on AWS EC2 at http://${EC2_HOST}:${PORT}"
         }
         failure {
-            echo "❌ Pipeline Failed: Deployment was aborted."
+            echo " Pipeline Failed: Deployment was aborted."
         }
     }
 }
