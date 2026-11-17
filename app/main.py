@@ -14,7 +14,7 @@ from app.schemas import (
 from app.model import F1PredictionEngine
 
 app = FastAPI(
-    title="🏎️ FormulaVision API",
+    title="FormulaVision ML Predictor",
     description="End-to-End MLOps & DevOps API for Formula 1 race pace prediction and podium simulation.",
     version="1.1.0"
 )
